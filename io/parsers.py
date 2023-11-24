@@ -123,8 +123,15 @@ def parse_appearances(val: str) -> Tuple:
     if pd.isnull(val) or val == 'nan':
         return None, None
     val = val.replace(')','')
-    starts, subs = val.split('(')
-    return int(starts.strip()), int(subs)
+    starts = None
+    subs = None
+    start_sub = val.split('(')
+    if len(start_sub) == 2:
+        starts = int(start_sub[0].strip())
+        subs = int(start_sub[1].strip())
+    else:
+        starts = int(start_sub[0].strip())
+    return starts, subs
 
 parse_mapping = {
     # A commented column field indicates no parsing needed, just want documentation
@@ -150,10 +157,13 @@ parse_mapping = {
     'Cmd':parse_nulled_int,
     'Cnt':parse_nulled_int,
     'Cmp':parse_nulled_int,
+    'Com':parse_nulled_int,
+    'Cor':parse_nulled_int,
     'Cro':parse_nulled_int,
     'Dec':parse_nulled_int,
     'Det':parse_nulled_int,
     'Dri':parse_nulled_int,
+    'Ecc':parse_nulled_int,
     'Fin':parse_nulled_int,
     'Fir':parse_nulled_int,
     'Fla':parse_nulled_int,
@@ -166,6 +176,7 @@ parse_mapping = {
     'L Th':parse_nulled_int,
     'Fre':parse_nulled_int,
     'Mar':parse_nulled_int,
+    'Nat':parse_nulled_int,
     'OtB':parse_nulled_int,
     'Pac':parse_nulled_int,
     'Pas':parse_nulled_int,
@@ -182,9 +193,6 @@ parse_mapping = {
     'TRO':parse_nulled_int,
     'Vis':parse_nulled_int,
     'Wor':parse_nulled_int,
-    'Cor':parse_nulled_int,
-    'Ecc':parse_nulled_int,
-    'Com':parse_nulled_int,
     
 # Club
     'Based':None,
@@ -288,7 +296,7 @@ parse_mapping = {
     'Injured On':parse_date,
 
 # General
-    'Age':None,
+    'Age':parse_nulled_int,
     'Weight':parse_weight, # units need hyper param, everything does
     'UID':None,
     'No.':None,
@@ -302,7 +310,6 @@ parse_mapping = {
     'Position':None,
     'Birth City':None,
     'Personality':None,
-    'Nat':None,
     'NoB':None,
     'Media Handling':None,
     'Media Description':None,

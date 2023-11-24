@@ -25,9 +25,21 @@ class FMLoader():
         columns = [re.split('\.\d', col, maxsplit=0)[0] for col in data.columns]
         data = data.astype({col:str for col in columns})
 
-        for col in columns:
-            func = parse_mapping[col]
-            if func is not None:
-                data[col] = data[col].apply(lambda x: func(x))
+        series_list = []
+        for col_name, series in data.items():
+            col_name = re.split('\.\d', col_name, maxsplit=0)[0]
 
-        return data
+            # Nationality and Natural Fitness have the same name
+            if col_name == 'Nat':
+                # Natural Fitness will never have a mean len above two
+                if series.apply(lambda x: len(x)).mean() > 2:
+                    series.name = 'Nation'
+                    series_list.append(series.copy())
+                    continue
+            func = parse_mapping[col_name]
+            if func is not None:
+                series_list.append(series.apply(lambda x: func(x)).copy())
+            else:
+                series_list.append(series)
+
+        return pd.concat(series_list, axis=1)
