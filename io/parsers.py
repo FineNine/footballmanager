@@ -1,7 +1,7 @@
-import numpy as np
+import pandas as pd
 import re
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Union
 
 # TODO
 # Make class for unit switch
@@ -9,12 +9,15 @@ from typing import Tuple
 # Optimize control flow of parsers
 
 def get_digits(val: str) -> float:
+    print(val)
+    print(type(val))
     return float(re.search(r'[+-]?([0-9]*[.])?[0-9]+', val.replace(',','')).group())
 
-def parse_value(val: str) -> float:
+def parse_value(val: str) -> Union[float, None]:
+    print(val)
     if '-' == val:
-        return 0
-    if pd.isnull(val):
+        return 0.
+    if pd.isnull(val) or val == 'nan':
         return None
     digits = get_digits(val)
     if 'M' in val:
@@ -24,7 +27,8 @@ def parse_value(val: str) -> float:
     else:
         return digits
 
-def parse_transfer_value(val: str) -> float:
+def parse_transfer_value(val: str) -> Union[Tuple, None]:
+    print(val)
     min_value = None
     max_value = None
     if ' - ' in val:
@@ -33,31 +37,37 @@ def parse_transfer_value(val: str) -> float:
         max_value = parse_value(maxi)
     return min_value, max_value
 
-def parse_percent(val: str) -> float:
+def parse_percent(val: str) -> Union[float, None]:
+    print(val)
     if val == '-':
         return None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None
     return float(val[:-1])/100
 
-def parse_wage(val: str) -> float:
+def parse_wage(val: str) -> Union[float, None]:
+    print(val)
     # Annualize wage value
     if '-' == val:
+        return None
+    if pd.isnull(val) or val == 'nan':
         return None
     return get_digits(val)
 
     return
 
-def parse_date(val: str) -> datetime: 
+def parse_date(val: str) -> Union[datetime, None]: 
+    print(val)
     # use re sub to remove parenthese if there is one
-    if val == '-':
+    if val == '-' or val == 'nan' or pd.isnull(val):
         return None
-    return datetime.strptime(val, "%m/%d/%Y")
+    return pd.to_datetime(val)
 
-def parse_date_range(val: str) -> Tuple[datetime]:
+def parse_date_range(val: str) -> Tuple:
+    print(val)
     if val == '-':
         return None, None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None, None
     if ' - ' in val:
         begin, end = val.split(' - ')
@@ -67,45 +77,51 @@ def parse_date_range(val: str) -> Tuple[datetime]:
     return None, None
 
 def parse_dob(val: str) -> datetime:
+    print(val)
     date = val.split('(')[0].strip()
     return parse_date(date)
 
-def parse_nulled_int(val: str) -> int:
+def parse_nulled_int(val: str) -> Union[Tuple, int, None]:
     # dash (-) equals 0, frustrating that you even have to parse
+    print(val)
     if val == '-':
         return None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None
     if ' - ' in val:
         lower, upper = val.split(' - ')
         return int(lower), int(upper)
     return int(val)
 
-def parse_nulled_float(val: str) -> float:
+def parse_nulled_float(val: str) -> Union[Tuple, float, None]:
+    print(val)
     if val == '-':
         return None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None
     if ' - ' in val:
         lower, upper = val.split(' - ')
         return float(lower), float(upper)
     return float(val)
 
-def parse_distance(val: str) -> float:
+def parse_distance(val: str) -> Union[float, None]:
+    print(val)
     if val == '-':
         return None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None
     return get_digits(val)
 
-def parse_weight(val: str) -> int:
+def parse_weight(val: str) -> Union[float, None]:
+    print(val)
     try:
         return get_digits(val)
     except:
         return None
 
-def parse_height(val: str) -> int:
-    if pd.isnull(val):
+def parse_height(val: str) -> Union[float, None]:
+    print(val)
+    if pd.isnull(val) or val == 'nan':
         return None
     if "'" in val and '"' in val:
         val = val.replace('"','')
@@ -115,10 +131,11 @@ def parse_height(val: str) -> int:
         return get_digits(val)
     return None
 
-def parse_appearances(val: str) -> Tuple[int]:
+def parse_appearances(val: str) -> Tuple:
+    print(val)
     if '-' == val:
         return None, None
-    if pd.isnull(val):
+    if pd.isnull(val) or val == 'nan':
         return None, None
     val = val.replace(')','')
     starts, subs = val.split('(')
@@ -137,46 +154,52 @@ parse_mapping = {
     'Name':None,
 
 # Attribute
-    '1v1':None,
-    'Acc':None,
-    'Aer':None,
-    'Agg':None,
-    'Agi':None,
-    'Ant':None,
-    'Bal':None,
-    'Bra':None,
-    'Cmd':None,
-    'Cnt':None,
-    'Cmp':None,
-    'Cro':None,
-    'Dec':None,
-    'Det':None,
-    'Dri':None,
-    'Fin':None,
-    'Fir':None,
-    'Fla':None,
-    'Han':None,
-    'Hea':None,
-    'Jum':None,
-    'Kic':None,
-    'Ldr':None,
-    'Lon':None,
-    'Mar':None,
-    'OtB':None,
-    'Pac':None,
-    'Pas':None,
-    'Pos':None,
-    'Ref':None,
-    'Sta':None,
-    'Str':None,
-    'Tck':None,
-    'Tea':None,
-    'Tec':None,
-    'Thr':None,
-    'TRO':None,
-    'Vis':None,
-    'Wor':None,
-    'Cor':None,
+    '1v1':parse_nulled_int,
+    'Acc':parse_nulled_int,
+    'Aer':parse_nulled_int,
+    'Agg':parse_nulled_int,
+    'Agi':parse_nulled_int,
+    'Ant':parse_nulled_int,
+    'Bal':parse_nulled_int,
+    'Bra':parse_nulled_int,
+    'Cmd':parse_nulled_int,
+    'Cnt':parse_nulled_int,
+    'Cmp':parse_nulled_int,
+    'Cro':parse_nulled_int,
+    'Dec':parse_nulled_int,
+    'Det':parse_nulled_int,
+    'Dri':parse_nulled_int,
+    'Fin':parse_nulled_int,
+    'Fir':parse_nulled_int,
+    'Fla':parse_nulled_int,
+    'Han':parse_nulled_int,
+    'Hea':parse_nulled_int,
+    'Jum':parse_nulled_int,
+    'Kic':parse_nulled_int,
+    'Ldr':parse_nulled_int,
+    'Lon':parse_nulled_int,
+    'L Th':parse_nulled_int,
+    'Fre':parse_nulled_int,
+    'Mar':parse_nulled_int,
+    'OtB':parse_nulled_int,
+    'Pac':parse_nulled_int,
+    'Pas':parse_nulled_int,
+    'Pos':parse_nulled_int,
+    'Ref':parse_nulled_int,
+    'Pun':parse_nulled_int,
+    'Pen':parse_nulled_int,
+    'Sta':parse_nulled_int,
+    'Str':parse_nulled_int,
+    'Tck':parse_nulled_int,
+    'Tea':parse_nulled_int,
+    'Tec':parse_nulled_int,
+    'Thr':parse_nulled_int,
+    'TRO':parse_nulled_int,
+    'Vis':parse_nulled_int,
+    'Wor':parse_nulled_int,
+    'Cor':parse_nulled_int,
+    'Ecc':parse_nulled_int,
+    'Com':parse_nulled_int,
     
 # Club
     'Based':None,
@@ -184,13 +207,14 @@ parse_mapping = {
     'Club':None,
 
 # Coaching
-    'Best Pos':str,
-    'Style':str,
-    'Best Role':str, # we take the full name
-    'Best Duty':str,
+    'Best Pos':None,
+    'Style':None,
+    'Best Role':None, # we take the full name
+    'Best Duty':None,
 
 # Contract
     'Act Non Prom Rls Fee':parse_value,
+    'Non Prom Rls Cls':None,
     'Yearly Salary Raise':parse_percent,
     'New Wage':parse_wage,
     'Unused Sub Fee':parse_value,
@@ -227,8 +251,8 @@ parse_mapping = {
     '1 Year Ext Rel Aft Games':None,
     'Non-Playing Rel':None,
     'Non-Prom Rls Cls':None,
-    'Min Fee Rls to Foregin Clubs Exp':parse_date,
-    'Min Fee Rls to Foregin Clubs':parse_value,
+    'Min Fee Rls to Foreign Clubs Exp':parse_date,
+    'Min Fee Rls to Foreign Clubs':parse_value,
     'Min Fee Rls to Domestic Clubs Exp':parse_date,
     'Min Fee Rls to Domestic Clubs':parse_value,
     'Min Fee Rls to Higher Div Exp':parse_date,
@@ -238,6 +262,8 @@ parse_mapping = {
     'Min Fee Rls Clubs Mjr Cont Comp':parse_value,
     'Min Fee Rls Clubs Cont Comp Exp':parse_date,
     'Min Fee Rls Clubs Cont Comp':parse_value,
+    'Min Fee Rls Clubs In Cont Comp Exp':parse_date,
+    'Min Fee Rls Clubs In Cont Comp':parse_date,
     'Min Fee Rls Exp':parse_date,
     'Min Fee Rls':parse_value,
     'Mtch High Earn':None,
@@ -301,11 +327,12 @@ parse_mapping = {
     'Favored Personnel':None,
     'Favored Clubs':None,
     'EU National':None,
-    'Elgible':None,
+    'Eligible':None,
     'Due Date':None,
     'Development Advice':None,
     'DOB':parse_dob,
     'Based In':None,
+
 
 # International
     'Caps':None,
@@ -337,7 +364,7 @@ parse_mapping = {
 # Squad
     'PI':None,
     'Suitability':None,
-    'Tax Fami':None,
+    'Tac Fami':None,
     'Playing Time':None,
 
 # Stats Gen
@@ -492,10 +519,10 @@ parse_mapping = {
 
 # Transfer
     'Actual Playing Time':None,
-    'WP Needed':str,
-    'WP Chance':str,
-    'Type':str,
-    'Transfer Value':parse_value_range,
+    'WP Needed':None,
+    'WP Chance':None,
+    'Type':None,
+    'Transfer Value':parse_transfer_value,
     'Transfer Status':None,
     'Transfer Fees Received':parse_value,
     "Player's Interest":None,
@@ -517,6 +544,18 @@ parse_mapping = {
     'Agreed Playing Time':None,
     'Agent':None, # we use the full name version
 
+# Hidden    
+
+# Drop List
+    'Ability':None,
+    'Role Ability':None,
+    'Potential':None,
+    'Will Leave At End Of Contract':None,
+    'Will Explore Options At End Of Contract':None,
+    'Waive Comp for Mgr Role':None,
+    'SHP':None,
+    'WR':None,
+    'Recent Changes (Last 2 Weeks)':None,
 }
 
 drop_list = [
@@ -538,46 +577,52 @@ type_mapping = {
     'Name':str,
 
 # Attribute
-    '1v1':int,
-    'Acc':int,
-    'Aer':int,
-    'Agg':int,
-    'Agi':int,
-    'Ant':int,
-    'Bal':int,
-    'Bra':int,
-    'Cmd':int,
-    'Cnt':int,
-    'Cmp':int,
-    'Cro':int,
-    'Dec':int,
-    'Det':int,
-    'Dri':int,
-    'Fin':int,
-    'Fir':int,
-    'Fla':int,
-    'Han':int,
-    'Hea':int,
-    'Jum':int,
-    'Kic':int,
-    'Ldr':int,
-    'Lon':int,
-    'Mar':int,
-    'OtB':int,
-    'Pac':int,
-    'Pas':int,
-    'Pos':int,
-    'Ref':int,
-    'Sta':int,
-    'Str':int,
-    'Tck':int,
-    'Tea':int,
-    'Tec':int,
-    'Thr':int,
-    'TRO':int,
-    'Vis':int,
-    'Wor':int,
-    'Cor':int,
+    '1v1':str,
+    'Acc':str,
+    'Aer':str,
+    'Agg':str,
+    'Agi':str,
+    'Ant':str,
+    'Bal':str,
+    'Bra':str,
+    'Cmd':str,
+    'Cnt':str,
+    'Cmp':str,
+    'Cro':str,
+    'Dec':str,
+    'Det':str,
+    'Dri':str,
+    'Fin':str,
+    'Fir':str,
+    'Fla':str,
+    'Han':str,
+    'Hea':str,
+    'Jum':str,
+    'Kic':str,
+    'Ldr':str,
+    'Lon':str,
+    'L Th':str,
+    'Fre':str,
+    'Mar':str,
+    'OtB':str,
+    'Pac':str,
+    'Pas':str,
+    'Pos':str,
+    'Ref':str,
+    'Pun':str,
+    'Pen':str,
+    'Sta':str,
+    'Str':str,
+    'Tck':str,
+    'Tea':str,
+    'Tec':str,
+    'Thr':str,
+    'TRO':str,
+    'Vis':str,
+    'Wor':str,
+    'Cor':str,
+    'Ecc':str,
+    'Com':str,
 
 # Club
     'Based':str,
@@ -592,6 +637,7 @@ type_mapping = {
 
 # Contract
     'Act Non Prom Rls Fee':str,
+    'Non Prom Rls Cls':str,
     'Yearly Salary Raise':str,
     'New Wage':str,
     'Unused Sub Fee':str,
@@ -622,14 +668,14 @@ type_mapping = {
     '% Gt. Receipts':str,
     '% Comp for Mgr Role':str,
     'Player Rights':str,
-    'Opt Ext by Club':int,
-    '1 Year Ext Prom Aft Games':int,
-    '1 Year Ext Aft Games':int,
-    '1 Year Ext Rel Aft Games':int,
+    'Opt Ext by Club':str,
+    '1 Year Ext Prom Aft Games':str,
+    '1 Year Ext Aft Games':str,
+    '1 Year Ext Rel Aft Games':str,
     'Non-Playing Rel':str,
     'Non-Prom Rls Cls':str,
-    'Min Fee Rls to Foregin Clubs Exp':str,
-    'Min Fee Rls to Foregin Clubs':str,
+    'Min Fee Rls to Foreign Clubs Exp':str,
+    'Min Fee Rls to Foreign Clubs':str,
     'Min Fee Rls to Domestic Clubs Exp':str,
     'Min Fee Rls to Domestic Clubs':str,
     'Min Fee Rls to Higher Div Exp':str,
@@ -637,8 +683,10 @@ type_mapping = {
     'Decrease Date':str,
     'Min Fee Rls Clubs Mjr Cont Comp Exp':str,
     'Min Fee Rls Clubs Mjr Cont Comp':str,
-    'Min Fee Rls Clubs Cont Comp Ext':str,
+    'Min Fee Rls Clubs Cont Comp Exp':str,
     'Min Fee Rls Clubs Cont Comp':str,
+    'Min Fee Rls Clubs In Cont Comp Exp':str,
+    'Min Fee Rls Clubs In Cont Comp':str,
     'Min Fee Rls Exp':str,
     'Min Fee Rls':str,
     'Mtch High Earn':str,
@@ -653,7 +701,7 @@ type_mapping = {
     'New Date':str,
     'Type':str,
     'Begins':str,
-    'Extension After Promotion':int,
+    'Extension After Promotion':str,
     'Expires':str,
     'Committee Min Fee Rls':str,
     'Assist Bonus':str,
@@ -681,7 +729,7 @@ type_mapping = {
     'Age':int,
     'Weight':str, # units need hyper param, everything does
     'UID':int,
-    'No.':int,
+    'No.':str,
     'Sec. Position':str,
     '2nd Nat':str,
     'Right Foot':str,
@@ -702,7 +750,7 @@ type_mapping = {
     'Favored Personnel':str,
     'Favored Clubs':str,
     'EU National':bool,
-    'Elgible':bool,
+    'Eligible':bool,
     'Due Date':str,
     'Development Advice':str,
     'DOB':str,
@@ -738,7 +786,7 @@ type_mapping = {
 # Squad
     'PI':str,
     'Suitability':str,
-    'Tax Fami':str,
+    'Tac Fami':str,
     'Playing Time':str,
 
 # Stats Gen
@@ -917,4 +965,17 @@ type_mapping = {
     'Asking Price':str,
     'Agreed Playing Time':str,
     'Agent':str, # we use the full name version
+
+# Hidden
+
+# Drop List
+    'Ability':str,
+    'Role Ability':str,
+    'Potential':str,
+    'Will Leave At End Of Contract':str,
+    'Will Explore Options At End Of Contract':str,
+    'Waive Comp for Mgr Role':str,
+    'SHP':str,
+    'WR':str,
+    'Recent Changes (Last 2 Weeks)':str,
 }
