@@ -1,8 +1,10 @@
-import pandas
+import pandas as pd
+import re
 import glob
 import getpass
 import os
 from .tools import get_latest_file
+from footballmanager.io.parsers import parse_mapping, type_mapping
 
 # TODO
 # print list of folders and files

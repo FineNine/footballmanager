@@ -9,12 +9,9 @@ from typing import Tuple, Union
 # Optimize control flow of parsers
 
 def get_digits(val: str) -> float:
-    print(val)
-    print(type(val))
     return float(re.search(r'[+-]?([0-9]*[.])?[0-9]+', val.replace(',','')).group())
 
 def parse_value(val: str) -> Union[float, None]:
-    print(val)
     if '-' == val:
         return 0.
     if pd.isnull(val) or val == 'nan':
@@ -28,7 +25,6 @@ def parse_value(val: str) -> Union[float, None]:
         return digits
 
 def parse_transfer_value(val: str) -> Union[Tuple, None]:
-    print(val)
     min_value = None
     max_value = None
     if ' - ' in val:
@@ -38,7 +34,6 @@ def parse_transfer_value(val: str) -> Union[Tuple, None]:
     return min_value, max_value
 
 def parse_percent(val: str) -> Union[float, None]:
-    print(val)
     if val == '-':
         return None
     if pd.isnull(val) or val == 'nan':
@@ -46,7 +41,6 @@ def parse_percent(val: str) -> Union[float, None]:
     return float(val[:-1])/100
 
 def parse_wage(val: str) -> Union[float, None]:
-    print(val)
     # Annualize wage value
     if '-' == val:
         return None
@@ -57,14 +51,12 @@ def parse_wage(val: str) -> Union[float, None]:
     return
 
 def parse_date(val: str) -> Union[datetime, None]: 
-    print(val)
     # use re sub to remove parenthese if there is one
     if val == '-' or val == 'nan' or pd.isnull(val):
         return None
     return pd.to_datetime(val)
 
 def parse_date_range(val: str) -> Tuple:
-    print(val)
     if val == '-':
         return None, None
     if pd.isnull(val) or val == 'nan':
@@ -77,13 +69,11 @@ def parse_date_range(val: str) -> Tuple:
     return None, None
 
 def parse_dob(val: str) -> datetime:
-    print(val)
     date = val.split('(')[0].strip()
     return parse_date(date)
 
 def parse_nulled_int(val: str) -> Union[Tuple, int, None]:
     # dash (-) equals 0, frustrating that you even have to parse
-    print(val)
     if val == '-':
         return None
     if pd.isnull(val) or val == 'nan':
@@ -94,7 +84,6 @@ def parse_nulled_int(val: str) -> Union[Tuple, int, None]:
     return int(val)
 
 def parse_nulled_float(val: str) -> Union[Tuple, float, None]:
-    print(val)
     if val == '-':
         return None
     if pd.isnull(val) or val == 'nan':
@@ -105,7 +94,6 @@ def parse_nulled_float(val: str) -> Union[Tuple, float, None]:
     return float(val)
 
 def parse_distance(val: str) -> Union[float, None]:
-    print(val)
     if val == '-':
         return None
     if pd.isnull(val) or val == 'nan':
@@ -113,14 +101,12 @@ def parse_distance(val: str) -> Union[float, None]:
     return get_digits(val)
 
 def parse_weight(val: str) -> Union[float, None]:
-    print(val)
     try:
         return get_digits(val)
     except:
         return None
 
 def parse_height(val: str) -> Union[float, None]:
-    print(val)
     if pd.isnull(val) or val == 'nan':
         return None
     if "'" in val and '"' in val:
@@ -132,7 +118,6 @@ def parse_height(val: str) -> Union[float, None]:
     return None
 
 def parse_appearances(val: str) -> Tuple:
-    print(val)
     if '-' == val:
         return None, None
     if pd.isnull(val) or val == 'nan':
