@@ -9,11 +9,13 @@ from typing import Tuple
 # Optimize control flow of parsers
 
 def get_digits(val: str) -> float:
-    return float(re.search(r'[+-]?([0-9]*[.])?[0-9]+', val).group())
+    return float(re.search(r'[+-]?([0-9]*[.])?[0-9]+', val.replace(',','')).group())
 
 def parse_value(val: str) -> float:
     if '-' == val:
         return 0
+    if pd.isnull(val):
+        return None
     digits = get_digits(val)
     if 'M' in val:
         return digits * 1000000
@@ -21,7 +23,6 @@ def parse_value(val: str) -> float:
         return digits * 1000
     else:
         return digits
-    return None
 
 def parse_transfer_value(val: str) -> float:
     min_value = None
@@ -35,15 +36,15 @@ def parse_transfer_value(val: str) -> float:
 def parse_percent(val: str) -> float:
     if val == '-':
         return None
-    if np.isnan(val):
+    if pd.isnull(val):
         return None
     return float(val[:-1])/100
 
 def parse_wage(val: str) -> float:
     # Annualize wage value
-    if val == '-':
+    if '-' == val:
         return None
-    digits = parse_value(val)
+    return get_digits(val)
 
     return
 
@@ -55,9 +56,9 @@ def parse_date(val: str) -> datetime:
 
 def parse_date_range(val: str) -> Tuple[datetime]:
     if val == '-':
-        return None
-    if np.isnan(val):
-        return None
+        return None, None
+    if pd.isnull(val):
+        return None, None
     if ' - ' in val:
         begin, end = val.split(' - ')
         begin_date = parse_date(begin)
@@ -73,16 +74,28 @@ def parse_nulled_int(val: str) -> int:
     # dash (-) equals 0, frustrating that you even have to parse
     if val == '-':
         return None
+    if pd.isnull(val):
+        return None
+    if ' - ' in val:
+        lower, upper = val.split(' - ')
+        return int(lower), int(upper)
     return int(val)
 
 def parse_nulled_float(val: str) -> float:
     if val == '-':
         return None
-    if np.isnan(val):
+    if pd.isnull(val):
         return None
+    if ' - ' in val:
+        lower, upper = val.split(' - ')
+        return float(lower), float(upper)
     return float(val)
 
 def parse_distance(val: str) -> float:
+    if val == '-':
+        return None
+    if pd.isnull(val):
+        return None
     return get_digits(val)
 
 def parse_weight(val: str) -> int:
@@ -92,6 +105,8 @@ def parse_weight(val: str) -> int:
         return None
 
 def parse_height(val: str) -> int:
+    if pd.isnull(val):
+        return None
     if "'" in val and '"' in val:
         val = val.replace('"','')
         feet, inch = val.split("'")
@@ -102,6 +117,8 @@ def parse_height(val: str) -> int:
 
 def parse_appearances(val: str) -> Tuple[int]:
     if '-' == val:
+        return None, None
+    if pd.isnull(val):
         return None, None
     val = val.replace(')','')
     starts, subs = val.split('(')
