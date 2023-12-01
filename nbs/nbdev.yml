@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "footballmanager"
+  site-url: "https://FineNine.github.io/footballmanager"
+  description: "python package for managing data from football manager"
+  repo-branch: main
+  repo-url: "https://github.com/FineNine/footballmanager"
