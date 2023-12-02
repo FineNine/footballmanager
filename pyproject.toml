@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "footballmanager"
+version = "0.1.0"
+description = "Package for managing data exports, analysis, and rpa testing for the series FootballManager"
+authors = ["Ty Kirchmann"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
