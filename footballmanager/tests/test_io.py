@@ -42,6 +42,6 @@ def test_load_export():
     assert type(data) == DataFrame
     assert len(data) == 47
 
-    [print(col, data[col].dtype) for col in data.columns]
+    # [print(col, data[col].dtype) for col in data.columns]
 
     data.to_csv('tests/test_player_search.csv', index=False)
