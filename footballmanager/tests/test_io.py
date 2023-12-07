@@ -37,11 +37,11 @@ def test_find_latest_file(tmp_path):
     assert  WindowsPath(latest_file) == temp_file2
 
 def test_load_export():
-    data = load_export("tests/test_player_search.html")
+    data = load_export("footballmanager/tests/test_player_search.html")
     
     assert type(data) == DataFrame
     assert len(data) == 47
 
     # [print(col, data[col].dtype) for col in data.columns]
 
-    data.to_csv('tests/test_player_search.csv', index=False)
+    data.to_csv('footballmanager/tests/test_player_search.csv', index=False)
