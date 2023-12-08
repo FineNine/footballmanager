@@ -210,7 +210,7 @@ def parse_html_file(export_filepath: str = None) -> pd.DataFrame:
     file = open(os.path.abspath(export_filepath), 'r', encoding='utf-8')
     return pd.read_html(
         file, 
-        flavor='bs4', 
+        flavor='lxml', 
         header=0, 
         encoding='utf-8', 
         na_values=["-"],
@@ -223,12 +223,19 @@ def find_latest_file(dir: WindowsPath | str = DEFAULT_SI_REPO) -> str:
     print(list_of_files)
     return str(max(list_of_files, key=os.path.getctime))
 
+def handle_column_naming(name, dtype):
+    name = re.split('\.\d', name, maxsplit=0)[0]
+    if name == "Nat":
+        if dtype == object:
+            return "Nation"
+    return name
+
 def load_export(export_filepath: str = None) -> pd.DataFrame:
     if '.html' not in export_filepath:
         raise ValueError("File Specified not a valid file type (html), this may not be the latest file in the dir if using the 'find_latest_file'")
 
     # Passed to pandas for bs4 parsing html, if impl any other file types, then this must become a case statement
     data = parse_html_file(export_filepath)    
-    data.columns = [re.split('\.\d', col_name, maxsplit=0)[0] for col_name in data.columns]
+    data.columns = [handle_column_naming(item[0], item[1].dtype) for item in data.items()]
 
     return data

@@ -36,7 +36,7 @@ def test_index():
     )
 
 def test_compute_layers(pandas_df, test_index):
-    data = test_index.compute(pandas_df)
+    data = test_index.compute(pandas_df, sort=False)
     assert data['test_index'].iloc[0] == 1.5
     assert data['test_index'].iloc[1] == 4.5
     assert data['test_index'].iloc[2] == 3.0
