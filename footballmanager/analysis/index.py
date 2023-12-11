@@ -47,7 +47,8 @@ class FMIndex:
         #     assert key in data.columns, f"{key} column not found in data"
         
         # Init Recursive Index Calculation
-        self.data = data
+        _ = data.copy()
+        self.data = data.copy()
         self.cols_used = []
 
 
@@ -62,13 +63,13 @@ class FMIndex:
 
         # FORMATTING
         if keep_only_relevant:
-            columns = [col for col in self.cols_used if col in data.columns]
+            columns = [col for col in self.cols_used if col in self.data.columns]
             self.data = self.data[columns].copy()
         
         if sort:
             self.data.sort_values(by=self.name, ascending=sort_ascending, inplace=True, axis=0)
 
-        return self.data.copy()
+        return self.data
         
     def _compute_weighting_dict(
             self, 
