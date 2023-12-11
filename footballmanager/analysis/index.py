@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Any
+from typing import Any, Union
 from footballmanager.analysis.domains import (
     basic_info,
     attributes,
@@ -25,15 +25,20 @@ class FMIndex:
             self.name = name
 
     def __add__(self, other: Any):
+        new_weights = self.weighting_dict
         if type(other) == type(self):
             for key, value in other.weighting_dict.items():
-                self.weighting_dict[key] = value
+                new_weights[key] = value
         elif type(other) == dict:
             for key, value in other.items():
-                self.weighting_dict[key] = value
+                new_weights[key] = value
         else:
             raise TypeError()
-        
+
+        return FMIndex(
+            name = f"{self.name} - {other.name}",
+            weighting_dict = new_weights
+        )        
 
     def compute(
             self,

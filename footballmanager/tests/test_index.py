@@ -35,6 +35,14 @@ def test_index():
             }
     )
 
+def test_adding_indexes(test_index):
+    other_dict = test_index
+    other_dict.weighting_dict['C'] = {'test':1}
+    new_index = test_index + other_dict
+    assert new_index.weighting_dict['C']['test'] == 1
+    assert new_index.weighting_dict['A']['acc'] == 1
+    assert new_index.weighting_dict['acc'] == 97
+
 def test_compute_layers(pandas_df, test_index):
     data = test_index.compute(pandas_df, sort=False)
     print(data.head())
