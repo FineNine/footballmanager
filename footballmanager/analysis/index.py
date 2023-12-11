@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Any
 from footballmanager.analysis.domains import (
     basic_info,
     attributes,
@@ -23,7 +24,7 @@ class FMIndex:
         else:
             self.name = name
 
-    def __add__(self, other: 'FMIndex' | dict):
+    def __add__(self, other: Any):
         if type(other) == type(self):
             for key, value in other.weighting_dict.items():
                 self.weighting_dict[key] = value
@@ -40,7 +41,7 @@ class FMIndex:
             keep_all_indexes: bool = True,
             sort: bool = True,
             sort_ascending: bool = False,
-            keep_only_relevant: bool = False,
+            keep_only_relevant: bool = True,
     ):
         # for key in self.weighting_dict: how to programtically check all non dict value keys recursively to check column avail up front, not worth effort right now
         #     assert key in data.columns, f"{key} column not found in data"
@@ -99,6 +100,12 @@ class FMIndex:
 
 ### PreBuilt Indexes
 ## Classes of Att
+MobilityIndex = FMIndex(name = "Mobility", weighting_dict={
+    'Acc':10,
+    'Agi':10,
+    'Pac':10,
+})
+
 TechnicalAttributeIndex = FMIndex(name = "Technical Att Index", weighting_dict={
     att:1 for att in technicals
 })
@@ -125,9 +132,87 @@ OutfieldPlayerAttributeIndex = FMIndex(name = "All Att Index", weighting_dict={
 
 # GK
 
+SweeperKeeper = FMIndex(name = "SK", weighting_dict={
+    'SK Essentials': {
+        'Cmd':10,
+        'Kic':10,
+        '1v1':10,
+        'Ref':10,
+        'TRO':10,
+        'Ant':10,
+        'Cmp':10,
+        'Cnt':10,
+        'Pos':10,
+        'Agi':10,
+    },
+    'SK Secondary': {
+        'Aer':5,
+        'Com':5,
+        'Ecc':5,
+        'Fir':5,
+        'Han':5,
+        'Pas':5,
+        'Thr':5,
+        'Dec':5,
+        'Vis':5,
+        'Acc':5,
+    }
+})
+
 # Defenders
+WideCenterBack = FMIndex(name = "BPD", weighting_dict={
+    'BPD Essentials': {
+        'Hea':10,
+        'Mar':10,
+        'Tck':10,
+        'Pos':10,
+        'Jum':10,
+        'Str':10,
+    },
+    'BPD Secondary': {
+        'Dri':5,
+        'Fir':5,
+        'Pas':5,
+        'Tec':5,
+        'Agg':5,
+        'Ant':5,
+        'Bra':5,
+        'Cmp':5,
+        'Cnt':5,
+        'Dec':5,
+        'Wor':5,
+        'Agi':5,
+        'Pac':5,
+    }
+})
 
 # Full/Wing Backs
+WingBack = FMIndex(name = "WB", weighting_dict={
+    'WB Essentials': {
+        'Cro':10,
+        'Dri':10,
+        'Mar':10,
+        'Tck':10,
+        'OtB':10,
+        'Tea':10,
+        'Wor':10,
+        'Acc':10,
+        'Sta':10,
+    },
+    'WB Secondary': {
+        'Fir':5,
+        'Pas':5,
+        'Tec':5,
+        'Ant':5,
+        'Cnt':5,
+        'Dec':5,
+        'Pos':5,
+        'Agi':5,
+        'Bal':5,
+        'Pac':5,
+    }
+})
+
 
 # DM/CMs
 BallWinningMidfielder = FMIndex(name="BWM", weighting_dict={
@@ -155,4 +240,38 @@ BallWinningMidfielder = FMIndex(name="BWM", weighting_dict={
 # WM/Wingers/Wide Forwards
 
 # # Strikers
+TargetForward = FMIndex(name = "TF", weighting_dict={
+    'TF Essentials': {
+        'Fin':10,
+        'Hea':10,
+        'Bra':10,
+        'Cmp':10,
+        'OtB':10,
+        'Bal':10,
+        'Jum':10,
+        'Str':10,
+    },
+    'TF Secondary': {
+        'Fir':5,
+        'Agg':5,
+        'Ant':5,
+        'Dec':5,
+        'Tea':5,
+    }
+})
 
+Poacher = FMIndex(name = 'Poacher', weighting_dict={
+    'Poacher Essentials': {
+        'Fin':10,
+        'Ant':10,
+        'Cmp':10,
+        'OtB':10,
+    },
+    'Poacher Secondary': {
+        'Fir':5,
+        'Hea':5,
+        'Tec':5,
+        'Dec':5,
+        'Acc':5,
+    }
+})
