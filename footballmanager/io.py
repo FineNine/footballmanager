@@ -189,7 +189,7 @@ DEFAULT_COLUMN_CONVERTERS = {
     'Min Fee Rls Clubs Mjr Cont Comp Exp':parse_date,
     'Min Fee Rls Clubs Cont Comp Exp':parse_date,
     'Min Fee Rls Clubs In Cont Comp Exp':parse_date,
-    'Min Fee Rls Clubs In Cont Comp':parse_date,
+    'Min Fee Rls Clubs In Cont Comp':parse_value,
     'Min Fee Rls Exp':parse_date,
     'Loan Duration':parse_date_range,
     'Loan Expires':parse_date,

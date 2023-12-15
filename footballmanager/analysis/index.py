@@ -241,7 +241,48 @@ BallWinningMidfielder = FMIndex(name="BWM", weighting_dict={
     },
 })
 
+Carrilero = FMIndex(name = "Carrilero", weighting_dict={
+    'Carrilero Essentials': {
+        'Fir':10,
+        'Pas':10,
+        'Tck':10,
+        'Dec':10,
+        'Pos':10,
+        'Tea':10,
+        'Sta':10,
+    },
+    'Carrilero Secondary': {
+        'Tec':5,
+        'Ant':5,
+        'Cmp':5,
+        'Cnt':5,
+        'OtB':5,
+        'Vis':5,
+        'Wor':5,
+    }
+})
+
 # AMs
+AttackingMidfielder = FMIndex(name = "Attacking Midfielder", weighting_dict={
+    "AM Essentials": {
+        'Drb':10,
+        'Fir':10,
+        'Lon':10,
+        'Pas':10,
+        'Tec':10,
+        'Ant':10,
+        'Dec':10,
+        'Fla':10,
+        'OtB':10,
+    },
+    'AM Secondary': {
+        'Fin':5,
+        'Cmp':5,
+        'Vis':5,
+        'Agi':5,
+    }
+})
+
 
 # WM/Wingers/Wide Forwards
 
